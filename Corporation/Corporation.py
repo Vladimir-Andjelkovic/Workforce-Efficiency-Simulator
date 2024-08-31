@@ -5,6 +5,8 @@
 # tech level (internal)
 # TODO: expand as factors expand
 import random
+from Person.Person import Person
+from World.WorldEvents import World
 
 
 class Corporation:
@@ -24,6 +26,7 @@ class Corporation:
         print('Some or all corporation names files not found.')
 
     formed_corporations = []
+    all_employees = []
 
     def __init__(self):
         self._generate_CID()
@@ -46,6 +49,9 @@ class Corporation:
             random_name = random.choice(Corporation.all_available_corporation_names)
             self.name = random_name
             Corporation.all_available_corporation_names.remove(random_name)
+        else:
+            print('There are no corporation names to choose from')
 
-    def hire_employee(self, employee):
+    def hire_employee(self, employee: Person):
+        # TODO: algorithm for calculating salary
         pass

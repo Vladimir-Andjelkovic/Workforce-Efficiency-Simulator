@@ -6,7 +6,6 @@ from Person.ExternalFactors import ExternalFactors
 from Algorithms import AlgorithmUtils
 
 
-# TODO: add unique identifier(UID) for each person
 def _read_and_store(file_path) -> list:
     result = []
     with open(file_path, 'r') as f:
@@ -41,7 +40,7 @@ class Person:
     all_last_names = _read_and_store(LAST_NAMES_PATH)
 
     def __init__(self, **kwargs):
-        # Factors not yet implemented
+        # TODO: Implement factors
         self.internal_factors = InternalFactors()
         self.external_factors = ExternalFactors()
 
@@ -53,6 +52,7 @@ class Person:
         self.job_title = kwargs.get('job_title', None)
         self.workplace = kwargs.get('workplace', None)
         self.income = kwargs.get('income', 0)
+        self.education_level = kwargs.get('education_level', None)
 
         if _check_validation_of_production_modifier(
                 Person.PRODUCTIVITY_MODIFIER_GOOD_WORKER,
@@ -104,3 +104,9 @@ class Person:
         #  their children,grandchildren... (genetics will be affected by multiple generation of people)
         Person.number_of_people -= 1
         del self
+
+    def assign_job(self, corporation, job_title, salary) -> None:
+        self.workplace = corporation.name
+        self.job_title = job_title
+        self.income += salary
+
