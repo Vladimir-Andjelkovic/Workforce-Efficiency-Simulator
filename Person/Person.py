@@ -34,21 +34,22 @@ class Person:
 
     _last_UID = 0
     all_alive_people = []
-    number_of_people: int = 0
     base_productivity: float = 1
     all_first_names = _read_and_store(FIRST_NAMES_PATH)
     all_last_names = _read_and_store(LAST_NAMES_PATH)
 
-    def __init__(self, **kwargs):
+    def __init__(self, world, **kwargs):
         # TODO: Implement factors
         self.internal_factors = InternalFactors()
         self.external_factors = ExternalFactors()
 
         self._generate_UID()
+        self.world = world
+        self.alive = True
         self.first_name = kwargs.get('first_name', self._generate_first_name())
         self.last_name = kwargs.get('last_name', self._generate_last_name())
-        self.age = kwargs.get('age', 20)
-        self.current_money = kwargs.get('current_money', 0)
+        self.age = kwargs.get('age', random.randint(20, 60))
+        self.current_money = kwargs.get('current_money', random.randint(100, 2000))
         self.job_title = kwargs.get('job_title', None)
         self.workplace = kwargs.get('workplace', None)
         self.income = kwargs.get('income', 0)
@@ -71,26 +72,6 @@ class Person:
 
         Person.all_alive_people.append(self)
 
-        Person.number_of_people += 1
-
-    @classmethod
-    def DEV_get_all_people(cls) -> list:
-        return cls.all_alive_people
-
-    def DEV_display_info(self):
-        print(f'UID: {self.UID}\n'
-              f'Name: {self.first_name} {self.last_name}\n'
-              f'Money: {self.current_money}\n'
-              f'Job Title: {self.job_title}\n'
-              f'Workplace: {self.workplace}\n'
-              f'Income: {self.income}\n'
-              f'Productivity: {self.productivity}\n'
-              f'-----------------------------------------------------------------------------------------\n')
-
-    def _generate_UID(self) -> None:
-        Person._last_UID += 1
-        self.UID = Person._last_UID
-
     @staticmethod
     def _generate_first_name() -> str:
         return random.choice(Person.all_first_names)
@@ -99,14 +80,24 @@ class Person:
     def _generate_last_name() -> str:
         return random.choice(Person.all_last_names)
 
+    # TODO: separate getters and setters from classes
+    def get_workplace(self):
+        return self.workplace
+
+    def get_productivity(self) -> float:
+        return self.productivity
+
+    def _generate_UID(self) -> None:
+        Person._last_UID += 1
+        self.UID = Person._last_UID
+
     def _die(self) -> None:
         # TODO: instances should not be deleted but kept in separate list of (dead) people for genetic modification of
         #  their children,grandchildren... (genetics will be affected by multiple generation of people)
-        Person.number_of_people -= 1
+        # self.alive = False
         del self
 
     def assign_job(self, corporation, job_title, salary) -> None:
         self.workplace = corporation.name
         self.job_title = job_title
         self.income += salary
-
