@@ -15,18 +15,19 @@ if __name__ == '__main__':
     world = World()
 
     world.generate_starting_population()
-    world.generate_starting_corporations()
+    world.generate_starting_corporations(corporation_count=8)
+    world.update_employment()
+    print(f'Number of Corporations: {len(Corporation.get_all_formed_corporations())}\n------------------------------\n')
 
     while time_controller.advance_time():
-        world.update_employment()
         print(f'Unemployed before hiring: {len(world.unemployed_people)}')
         print(f'Employed before hiring: {len(world.employed_people)}')
 
-        for corporation in Corporation.get_all_formed_corporations():
-            world.set_unemployed_people(corporation.hire_employees(world.unemployed_people))
-            world.update_employment()
+        corporations = Corporation.get_all_formed_corporations()
+        for corporation in corporations:
+            candidates = corporation.hire_employees(world.unemployed_people)
+            world.update_employment(people_list=candidates)
 
         print(f'Unemployed after hiring: {len(world.unemployed_people)}')
         print(f'Employed after hiring: {len(world.employed_people)}')
         print('--------------------------------------')
-

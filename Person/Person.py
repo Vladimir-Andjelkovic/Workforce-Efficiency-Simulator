@@ -46,6 +46,8 @@ class Person:
         self._generate_UID()
         self.world = world
         self.alive = True
+        self.candidate = False
+
         self.first_name = kwargs.get('first_name', self._generate_first_name())
         self.last_name = kwargs.get('last_name', self._generate_last_name())
         self.age = kwargs.get('age', random.randint(20, 60))
@@ -98,6 +100,6 @@ class Person:
         del self
 
     def assign_job(self, corporation, job_title, salary) -> None:
-        self.workplace = corporation.name
+        self.workplace = corporation
         self.job_title = job_title
         self.income += salary

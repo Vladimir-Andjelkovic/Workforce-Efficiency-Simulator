@@ -6,8 +6,6 @@ class World:
     # TODO: maybe store alive (and dead) humans here, depending on the future logic
     initial_population_size: int = 1000
     initial_corporation_count: int = 10
-    employed_people = []
-    unemployed_people = []
 
     jobs_base_salary = {
         # TODO: add jobs and their base salaries go here (abstract starting point)
@@ -18,14 +16,26 @@ class World:
     def __init__(self):
         # TODO: algorithm for calculating market stability
         self.market_stability: float = 1.00
+        self.employed_people = []
+        self.unemployed_people = []
 
-    @staticmethod
-    def update_employment():
-        for person in Person.all_alive_people:
-            if person.get_workplace():
-                World.employed_people.append(person)
-            else:
-                World.unemployed_people.append(person)
+    def update_employment(self, people_list=Person.all_alive_people):
+        try:
+            if people_list:
+                for person in people_list:
+                    if person.get_workplace():
+                        if person in self.unemployed_people:
+                            self.unemployed_people.remove(person)
+                        if person not in self.employed_people:
+                            self.employed_people.append(person)
+                    else:
+                        if person in self.employed_people:
+                            self.employed_people.remove(person)
+                        if person not in self.unemployed_people:
+                            self.unemployed_people.append(person)
+        except ValueError:
+            print('Person was not found for updating employment.')
+
 
     def get_market_stability(self) -> float:
         return self.market_stability

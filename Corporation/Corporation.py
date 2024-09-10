@@ -16,22 +16,26 @@ class Corporation:
         'paper_industry': 'Names/Corporation/PaperIndustry.txt'
     }
 
-    try:
-        for key, value in corporation_names_paths.items():
-            with open(value, 'r') as f:
-                for line in f.readlines():
-                    all_available_corporation_names.append(line.strip())
-    except FileNotFoundError:
-        print('Some or all corporation names files not found.')
+    @classmethod
+    def get_corporation_names(cls):
+        try:
+            for key, value in cls.corporation_names_paths.items():
+                with open(value, 'r') as f:
+                    for line in f.readlines():
+                        cls.all_available_corporation_names.append(line.strip())
+        except FileNotFoundError:
+            print('Some or all corporation names files not found.')
 
     formed_corporations = []
-    all_employees = []
 
     def __init__(self, world):
         self._generate_CID()
+        self.name = None
         self._generate_name()
         self.world = world
-        self.max_number_of_employees = random.randint(10, 100)
+        # self.max_number_of_employees = random.randint(10, 100)
+        self.max_number_of_employees = 100
+        self.all_employees = []
 
         Corporation.formed_corporations.append(self)
 
@@ -63,14 +67,14 @@ class Corporation:
     def hire_employees(self, unemployed_people: list):
         # TODO: After adding HR, number of employees that can be hired in one time interval should be based on the
         #  resources available to the HR department
-        unemployed_people.sort(key=lambda instance: instance.productivity, reverse=True)
 
-        candidates = []
+        if len(self.all_employees) < self.max_number_of_employees:
+            unemployed_people.sort(key=lambda instance: instance.productivity, reverse=True)
 
-        while len(candidates) < self.max_number_of_employees:
-            if len(unemployed_people) > 0:
+            candidates = []
+
+            while len(candidates) < self.max_number_of_employees and len(unemployed_people) > 0:
                 candidate = unemployed_people.pop(0)
-                candidates.append(candidate)
                 # TODO: jobs relevant to industry
                 job_position = 'worker'
                 salary = AlgorithmUtils.calculate_employee_salary(
@@ -82,5 +86,7 @@ class Corporation:
                     1.0
                 )
                 candidate.assign_job(self, job_position, salary)
+                candidates.append(candidate)
+                self.all_employees.append(candidate)
 
-        return unemployed_people
+            return candidates
